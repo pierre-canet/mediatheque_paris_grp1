@@ -57,7 +57,8 @@ function auth_register() {
     ];
     
     if (is_post()) {
-        $name = clean_input(post('name'));
+        $nom = clean_input(post('name'));     
+        $prenom = clean_input(post('prenom')); 
         $email = clean_input(post('email'));
         $password = post('password');
         $confirm_password = post('confirm_password');

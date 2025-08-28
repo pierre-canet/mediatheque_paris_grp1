@@ -9,11 +9,24 @@
             <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
             
             <div class="form-group">
-                <label for="name">Nom complet</label>
+                <label for="name">Nom </label>
                 <input type="text" id="name" name="name" required 
                        value="<?php echo escape(post('name', '')); ?>"
-                       placeholder="Votre nom complet">
+                       placeholder="Votre nom "
+                       pattern="[A-Za-zÀ-ÿ\s\-]{2,50}"
+                       title="2 à 50 lettres, espaces et tirets uniquement">
+
             </div>
+
+            <div class="form-group">
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" name="prenom" required 
+                    value="<?php echo escape(post('prenom', '')); ?>"
+                    placeholder="Votre prénom"
+                    pattern="[A-Za-zÀ-ÿ\s\-]{2,50}"
+                    title="2 à 50 lettres, espaces et tirets uniquement">
+            </div>
+
             
             <div class="form-group">
                 <label for="email">Adresse email</label>
