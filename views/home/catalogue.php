@@ -12,12 +12,12 @@
 
 /*
     *Fonctions routeur.php
-    _
+    _utiliser la fonction function_dispatch(){}
 */
 
 /*
     *Fonctions model.php
-    _
+    _créer une page catalogue_model.php
 */
 
 /*
@@ -27,6 +27,7 @@
 
 /*
     *Fonctions home_controller.php
+    _créer une fonction home_catalogue(){}
 */
 
 
@@ -58,22 +59,60 @@
 </div>
 
 <section>
-    <form action="">
-
+    <form method="GET" action="">
+        <input type="text" placeholder="Entrez votre recherche">
+        <div class="à remplir">
+            <legend>Filtres</legend>
+            <select name="" id="">
+                <option value="">
+                    --type--
+                </option>
+                <option value="">Livre</option>
+                <option value="">Film</option>
+                <option value="">Jeu vidéo</option>
+            </select>
+            <select name="" id="">
+                <option value="">
+                    --genre--
+                </option>
+            </select>
+            <select name="" id="">
+                <option value="">
+                    --En stock--
+                </option>
+                <option value="">
+                    Oui
+                </option>
+                <option value="">
+                    Non
+                </option>                
+            </select>
+        </div>
+        <!--
+            <select name="style" id="style-select">
+                <option value="">--Filtres--</option>
+                <option value="à remplir">
+                    Par type
+                </option>
+                <option value="à remplir">
+                    Par genre
+                </option>
+                <option value="à remplir">
+                    Par disponibilité
+                </option>                
+            </select>
+        -->
     </form>
 </section>
-
+<!--Grille d'affichage des médias du catalogue-->
 <section>
     <h2>Livres</h2>
-    <div></div>
 </section>
-
 <section>
     <h2>Films</h2>
-    <div></div>
 </section>
-
 <section>
     <h2>Jeux vidéos</h2>
-    <div></div>
 </section>
+
+
