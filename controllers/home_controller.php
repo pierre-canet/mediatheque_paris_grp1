@@ -84,4 +84,16 @@ function home_test() {
     ];
     
     load_view_with_layout('home/test', $data);
-} 
+}
+
+/**
+ * Page Catalogue
+ */
+function home_catalogue() {
+    $data = [
+        'title' => 'Catalogue',
+        'content' => 'Découvrez tous les articles que nous avons à vous proposer dans ce vaste catalogue !'
+    ];
+    //Ajouter le code pour le formulaire
+    load_view_with_layout('home/catalogue', $data);
+}

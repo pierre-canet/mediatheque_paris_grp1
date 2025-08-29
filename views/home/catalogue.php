@@ -26,8 +26,10 @@
 */
 
 /*
-    *Fonctions home_controller.php
+    *Fonctions home_controller.php    
     _créer une fonction home_catalogue(){}
+    _si fonctionnel et trop volumineux, créer un dossier catalogue/, un fichier 
+    catalogue_controleur.php et une fonction home_catalogue
 */
 
 
@@ -51,12 +53,20 @@
 <div class="page-header">
     <div class="container">
         <h1><?php e($title); ?></h1>
-    </div>
-    <p>
-        Trouvez votre bonheur dans notre vaste catalogue parmi des livres, des films et même des 
-        jeux vidéos !
-    </p>
+    </div>    
 </div>
+
+<section class="content">
+    <div class="container">
+        <div class="content-grid">
+            <div class="content-main">
+            <!--<h1><?php// e($message); ?></h1>
+                <h2><?php// e($message); ?> </h2>-->
+<p><?php e($content); ?></p>
+
+            </div>
+        </div>
+</section>
 
 <section>
     <form method="GET" action="">
@@ -86,8 +96,9 @@
                 <option value="">
                     Non
                 </option>                
-            </select>
+            </select>            
         </div>
+        <input type="submit" value="Rechercher">
         <!--
             <select name="style" id="style-select">
                 <option value="">--Filtres--</option>
