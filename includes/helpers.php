@@ -5,7 +5,7 @@
  * Sécurise l'affichage d'une chaîne de caractères (protection XSS)
  */
 function escape($string) {
-    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
 }
 
 /**
@@ -224,4 +224,12 @@ function require_admin() {
     if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
         redirect('home');
     }
+}
+
+
+/**
+ * Retourne le prénom de l'utilisateur connecté
+ */
+function current_user_name() {
+    return $_SESSION['user_name'] ?? 'Invité';
 }

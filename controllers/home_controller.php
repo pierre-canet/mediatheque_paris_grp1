@@ -14,7 +14,8 @@ function home_index() {
             'Templating HTML/CSS',
             'Gestion de base de données',
             'Sécurité intégrée'
-        ]
+        ],
+        'user_name' => $_SESSION['name'] ?? 'Invité'
     ];
     
     load_view_with_layout('home/index', $data);
@@ -68,8 +69,10 @@ function home_profile() {
     $data = [
         'title' => 'Profile',
         'message' => 'Bienvenue sur votre profil',
-        'content' => 'Cette application est un starter kit PHP MVC développé avec une approche procédurale.'
+        'content' => 'Cette application est un starter kit PHP MVC développé avec une approche procédurale.',
+        'user_name' => $_SESSION['name'] ?? 'Invité'
     ];
+    
     
     load_view_with_layout('home/profile', $data);
 } 
