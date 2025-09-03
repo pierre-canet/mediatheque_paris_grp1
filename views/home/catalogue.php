@@ -73,7 +73,7 @@
         <input type="text" placeholder="Entrez votre recherche">
         <div class="à remplir">
             <legend>Filtres</legend>
-            <select name="" id="">
+            <select name="style" id="typeFilter">
                 <option value="">
                     --type--
                 </option>
@@ -81,20 +81,29 @@
                 <option value="">Film</option>
                 <option value="">Jeu vidéo</option>
             </select>
-            <select name="" id="">
+            <select name="gender" id="GenderFilter">
                 <option value="">
                     --genre--
+                </option>
+                <option value="scienceFiction">
+                    --science-fiction--
+                </option>
+                <option value="bacASable">
+                    --bac à sable--
                 </option>
             </select>
             <select name="" id="">
                 <option value="">
-                    --En stock--
+                    --disponibilité--
                 </option>
                 <option value="">
-                    Oui
+                    disponible
                 </option>
                 <option value="">
-                    Non
+                    emprunté
+                </option>
+                <option value="">
+                    tous
                 </option>                
             </select>            
         </div>
@@ -117,13 +126,37 @@
 </section>
 <!--Grille d'affichage des médias du catalogue-->
 <section>
-    <h2>Livres</h2>
-</section>
-<section>
-    <h2>Films</h2>
-</section>
-<section>
-    <h2>Jeux vidéos</h2>
+    <h2>📚 Livres</h2>
+    <div class="grid">
+        <?php foreach ($data['books'] as $book): ?>
+        <div class="doc">            
+            <?=htmlspecialchars($book['title'])?>
+            <?=htmlspecialchars($book['synopsis'])?>
+            <?=htmlspecialchars($book['gender'])?>                        
+        </div>
+        <?php endforeach; ?>
+    </div>    
+
+    <h2>🎬 Films</h2>  
+    <div class="grid">
+        <?php foreach ($data['movies'] as $movies): ?>
+        <div class="doc">            
+            <?=htmlspecialchars($movies['title'])?>
+            <?=htmlspecialchars($movies['producer'])?>
+            <?=htmlspecialchars($movies['synopsis'])?>                                  
+        </div>
+        <?php endforeach; ?>
+    </div>
+
+    <h2>🎮 Jeux vidéo</h2>
+    <div class="grid">
+        <?php foreach ($data['videoGames'] as $videoGames): ?>
+        <div class="doc">            
+            <?=htmlspecialchars($videoGames['title'])?>
+            <?=htmlspecialchars($videoGames['editor'])?>
+            <?=htmlspecialchars($videoGames['description'])?>                                  
+        </div>
+        <?php endforeach; ?>
 </section>
 
 

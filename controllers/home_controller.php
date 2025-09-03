@@ -89,11 +89,44 @@ function home_test() {
 /**
  * Page Catalogue
  */
-function home_catalogue() {
+    function home_catalogue() {
+    require_once MODEL_PATH.'/catalogue_model.php'; // adapte le chemin selon ton projet
     $data = [
         'title' => 'Catalogue',
-        'content' => 'Découvrez tous les articles que nous avons à vous proposer dans ce vaste catalogue !'
+        'content' => 'Découvrez tous les articles que nous avons à vous proposer dans ce vaste catalogue !',
+        'books' => get_all_books(),
+        'movies' => get_all_movies(),
+        'videoGames' => get_all_video_games(),
+        'id' => get_id(),        
     ];
+    
+    $media = [
+        
+    ];
+    
+    //Afficher le catalogue ?
+    
+
     //Ajouter le code pour le formulaire
-    load_view_with_layout('home/catalogue', $data);
+    if(isset($_GET['submit'])) {
+        if(isset($_GET['type'])) {
+            if(in_array($type, ["books", "movies", "videoGames"])){
+
+            };
+
+        }
+        elseif(isset($_GET['gender'])){
+            $data['genderFilter'] = get_articles_by_gender($_GET['gender']);
+            if(in_array($_Get['gender'], ["scienceFiction", "bacASable", "", "",])){
+            }            
+        }
+        elseif(isset($_GET['stock'])){
+            if(in_array($stock, ["free", "loaned", "all",])){
+
+            }
+
+        }
+    }
+    
+    load_view_with_layout('home/catalogue', $data,);
 }
