@@ -191,6 +191,36 @@ function current_user_id() {
 }
 
 /**
+ * Retourne les infos complètes de l'utilisateur connecté
+ */
+function current_user() {
+    if (!is_logged_in()) {
+        return null;
+    }
+
+    require_once MODEL_PATH . '/user_model.php';
+    return get_user_by_id(current_user_id());
+}
+
+/**
+ * Retourne le prénom de l'utilisateur connecté
+ */
+function current_user_name() {
+    return $_SESSION['user_name'] ?? 'Invité';
+}
+
+/**
+ * Vérifie si l'utilisateur est admin, sinon redirige vers la page d'accueil
+ */
+function require_admin() {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+        set_flash_message('error', 'Accès interdit.');
+        redirect_to('/');
+        exit;
+    }
+}
+
+/**
  * Déconnecte l'utilisateur
  */
 function logout() {
@@ -213,23 +243,4 @@ function generate_slug($string) {
     $string = preg_replace('/[^a-z0-9\s-]/', '', $string);
     $string = preg_replace('/[\s-]+/', '-', $string);
     return trim($string, '-');
-} 
-
-
-
-/**
- * Vérifie si l'utilisateur est admin, sinon redirige vers la page d'accueil
- */
-function require_admin() {
-    if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-        redirect('home');
-    }
-}
-
-
-/**
- * Retourne le prénom de l'utilisateur connecté
- */
-function current_user_name() {
-    return $_SESSION['user_name'] ?? 'Invité';
 }
