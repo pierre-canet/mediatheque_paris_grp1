@@ -213,12 +213,14 @@ function current_user_name() {
  * Vérifie si l'utilisateur est admin, sinon redirige vers la page d'accueil
  */
 function require_admin() {
-    if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-        set_flash_message('error', 'Accès interdit.');
-        redirect_to('/');
+    $user = current_user();
+    if (!$user || $user['role'] !== 'admin') {
+        set_flash('error', "Accès refusé : vous devez être administrateur.");
+        redirect('/'); // ou "home" selon ton routeur
         exit;
     }
 }
+
 
 /**
  * Déconnecte l'utilisateur

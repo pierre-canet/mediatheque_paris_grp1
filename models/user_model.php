@@ -93,3 +93,7 @@ function email_exists($email, $exclude_id = null) {
     $result = db_select_one($query, $params);
     return $result['count'] > 0;
 } 
+
+function get_users_count() {
+    return count_users();
+}
