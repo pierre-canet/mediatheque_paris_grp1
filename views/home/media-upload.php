@@ -1,124 +1,133 @@
 <?php
-$erreurs = [];   // Tableau qui va contenir les messages d'erreurs
-$message = "";   // Message de succès si tout est bon
+$type = $_POST['type'] ?? ''; 
+$errors = [];   // tableau pour stocker les erreurs
+$success = "";  // message si tout fonctionne
 
-// Vérifier si le formulaire est soumis
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $type = $_POST["type"];  // Récupère le type choisi (livre, film ou jeu)
+if ($_SERVER["REQUEST_METHOD"] === "POST" && $type) {
+    
+    if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
 
-    // ----------- VALIDATION SELON LE TYPE CHOISI -----------
-    switch ($type) {
-        case "livre":
-            // Auteur obligatoire entre 2 et 100 caractères
-            if (strlen($_POST["auteur"]) < 2 || strlen($_POST["auteur"]) > 100)
-                $erreurs[] = "Auteur : 2-100 caractères.";
-            
-            // ISBN doit contenir 10 ou 13 chiffres
-            if (!preg_match("/^\d{10}(\d{3})?$/", $_POST["isbn"]))
-                $erreurs[] = "ISBN doit avoir 10 ou 13 chiffres.";
-            
-            // Pages entre 1 et 9999
-            if ($_POST["pages"] < 1 || $_POST["pages"] > 9999)
-                $erreurs[] = "Pages : 1-9999.";
-            
-            // Année entre 1900 et année actuelle
-            if ($_POST["annee"] < 1900 || $_POST["annee"] > date("Y"))
-                $erreurs[] = "Année invalide.";
-            break;
+        $file = $_FILES['image'];
 
-        case "film":
-            // Réalisateur obligatoire entre 2 et 100 caractères
-            if (strlen($_POST["realisateur"]) < 2 || strlen($_POST["realisateur"]) > 100)
-                $erreurs[] = "Réalisateur : 2-100 caractères.";
-            
-            // Durée entre 1 et 999 minutes
-            if ($_POST["duree"] < 1 || $_POST["duree"] > 999)
-                $erreurs[] = "Durée : 1-999 minutes.";
-            
-            // Année entre 1900 et année actuelle
-            if ($_POST["annee"] < 1900 || $_POST["annee"] > date("Y"))
-                $erreurs[] = "Année invalide.";
-            
-            // Classification obligatoire
-            if (!in_array($_POST["classification"], ["Tous publics", "-12", "-16", "-18"]))
-                $erreurs[] = "Classification obligatoire.";
-            break;
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $errors[] = "Erreur lors de l'upload de l'image.";
+        } else {
+            // Taille max : 2 Mo
+            if ($file['size'] > 2097152) { 
+                $errors[] = "Le fichier est trop volumineux (max 2 Mo).";
+            }
 
-        case "jeu":
-            // Éditeur obligatoire entre 2 et 100 caractères
-            if (strlen($_POST["editeur"]) < 2 || strlen($_POST["editeur"]) > 100)
-                $erreurs[] = "Éditeur : 2-100 caractères.";
-            
-            // Plateforme obligatoire parmi les choix
-            if (!in_array($_POST["plateforme"], ["PC", "PlayStation", "Xbox", "Nintendo", "Mobile"]))
-                $erreurs[] = "Plateforme invalide.";
-            
-            // Âge minimum obligatoire parmi les choix
-            if (!in_array($_POST["age"], ["3", "7", "12", "16", "18"]))
-                $erreurs[] = "Âge minimum invalide.";
-            break;
-    }
+            // Vérifier extension
+            $allowedExt = ['jpg','jpeg','png','gif'];
+            $fileExt = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
-    // Si aucune erreur → message de succès
-    if (empty($erreurs)) {
-        $message = "  Données valides et prêtes à être enregistrées.";
+            // Récupérer infos de l’image
+            $dim = getimagesize($file['tmp_name']); 
+            if ($dim === false) {
+                $errors[] = "Le fichier n'est pas une image valide.";
+            } else {
+                // Vérifier dimensions minimales
+                if ($dim[0] < 100 || $dim[1] < 100) {
+                    $errors[] = "L'image doit avoir au minimum 100x100 pixels.";
+                }
+
+                // Vérifier le type MIME via image_type_to_mime_type()
+                $mime = image_type_to_mime_type($dim[2]);
+                if (!in_array($fileExt, $allowedExt) || !in_array($mime, ['image/jpeg','image/png','image/gif'])) {
+                    $errors[] = "Format non supporté. Formats acceptés : JPG, PNG, GIF.";
+                }
+            }
+
+            // Si aucune erreur -> on sauvegarde
+            if (empty($errors)) {
+                $newName = uniqid("media_", true).".".$fileExt;
+                $uploadDir = __DIR__ . "/uploads/";
+
+                if (!is_dir($uploadDir)) mkdir($uploadDir);
+
+                if (move_uploaded_file($file['tmp_name'], $uploadDir.$newName)) {
+                    $success = "Image uploadée avec succès : ".$newName;
+                } else {
+                    $errors[] = "Impossible d'enregistrer l'image (espace disque ?).";
+                }
+            }
+        }
     }
 }
 ?>
 
-<!-- ===== FORMULAIRE ===== -->
-<form method="POST">
-    <!-- Liste déroulante pour choisir le type de média -->
-    <label>Type :</label>
-    <select name="type" onchange="this.form.submit()">
-        <option value="">-- Choisir --</option>
-        <option value="livre" <?= (@$_POST["type"]=="livre"?"selected":"") ?>>Livre</option>
-        <option value="film" <?= (@$_POST["type"]=="film"?"selected":"") ?>>Film</option>
-        <option value="jeu" <?= (@$_POST["type"]=="jeu"?"selected":"") ?>>Jeu vidéo</option>
-    </select>
-    <br><br>
+<!-- Formulaire -->
+<form method="POST" enctype="multipart/form-data">
+  <label>Type de média :</label>
+  <select name="type" onchange="this.form.submit()">
+    <option value="">-- Choisir --</option>
+    <option value="livre" <?= ($type==='livre'?'selected':'') ?>>Livre</option>
+    <option value="film"  <?= ($type==='film'?'selected':'')  ?>>Film</option>
+    <option value="jeu"   <?= ($type==='jeu'?'selected':'')   ?>>Jeu vidéo</option>
+  </select>
+  <br><br>
 
-    <!-- Champs spécifiques affichés selon le type choisi -->
-    <?php if(@$_POST["type"]=="livre"): ?>
-        Auteur : <input name="auteur"><br>
-        ISBN : <input name="isbn"><br>
-        Pages : <input type="number" name="pages"><br>
-        Année : <input type="number" name="annee"><br>
-    <?php elseif(@$_POST["type"]=="film"): ?>
-        Réalisateur : <input name="realisateur"><br>
-        Durée : <input type="number" name="duree"><br>
-        Année : <input type="number" name="annee"><br>
-        Classification :
-        <select name="classification">
-            <option value="">-- Choisir --</option>
-            <option>Tous publics</option><option>-12</option><option>-16</option><option>-18</option>
-        </select><br>
-    <?php elseif(@$_POST["type"]=="jeu"): ?>
-        Éditeur : <input name="editeur"><br>
-        Plateforme :
-        <select name="plateforme">
-            <option>PC</option><option>PlayStation</option><option>Xbox</option><option>Nintendo</option><option>Mobile</option>
-        </select><br>
-        Âge minimum :
-        <select name="age">
-            <option>3</option><option>7</option><option>12</option><option>16</option><option>18</option>
-        </select><br>
-    <?php endif; ?>
+  <?php if ($type==='livre'): ?>
+    Auteur : <input name="auteur" value="<?= htmlspecialchars($_POST['auteur']??'') ?>"><br>
+    ISBN : <input name="isbn" value="<?= htmlspecialchars($_POST['isbn']??'') ?>"><br>
+    Pages : <input type="number" name="pages" value="<?= htmlspecialchars($_POST['pages']??'') ?>"><br>
+    Année : <input type="number" name="annee" value="<?= htmlspecialchars($_POST['annee']??'') ?>"><br>
+  <?php elseif ($type==='film'): ?>
+    Réalisateur : <input name="realisateur" value="<?= htmlspecialchars($_POST['realisateur']??'') ?>"><br>
+    Durée (min) : <input type="number" name="duree" value="<?= htmlspecialchars($_POST['duree']??'') ?>"><br>
+    Année : <input type="number" name="annee" value="<?= htmlspecialchars($_POST['annee']??'') ?>"><br>
+    Classification :
+    <select name="classification">
+      <?php
+        $classes = ["","Tous publics","-12","-16","-18"];
+        $sel = $_POST['classification'] ?? '';
+        foreach ($classes as $c) {
+          $lab = $c ?: '-- Choisir --';
+          echo "<option value=\"".htmlspecialchars($c)."\" ".($sel===$c?'selected':'').">$lab</option>";
+        }
+      ?>
+    </select><br>
+  <?php elseif ($type==='jeu'): ?>
+    Éditeur : <input name="editeur" value="<?= htmlspecialchars($_POST['editeur']??'') ?>"><br>
+    Plateforme :
+    <select name="plateforme">
+      <?php
+        $plats = ["PC","PlayStation","Xbox","Nintendo","Mobile"];
+        $sel = $_POST['plateforme'] ?? '';
+        foreach ($plats as $p) {
+          echo "<option ".($sel===$p?'selected':'').">$p</option>";
+        }
+      ?>
+    </select><br>
+    Âge minimum :
+    <select name="age">
+      <?php
+        $ages = ["3","7","12","16","18"];
+        $sel = $_POST['age'] ?? '';
+        foreach ($ages as $a) {
+          echo "<option ".($sel===$a?'selected':'').">$a</option>";
+        }
+      ?>
+    </select><br>
+  <?php endif; ?>
 
-    <!-- Bouton valider affiché seulement si un type est choisi -->
-    <?php if(!empty($_POST["type"])): ?>
-        <br><button type="submit">Valider</button>
-    <?php endif; ?>
+  <?php if ($type): ?>
+    <br>Image : <input type="file" name="image"><br><br>
+    <button type="submit">Valider</button>
+  <?php endif; ?>
 </form>
 
-<!-- ===== AFFICHAGE DES ERREURS OU MESSAGE ===== -->
 <?php
-// Si erreurs → afficher en rouge
-if ($erreurs) {
+// Affichage des erreurs
+if (!empty($errors)) {
     echo "<ul style='color:red;'>";
-    foreach ($erreurs as $err) echo "<li>$err</li>";
+    foreach ($errors as $e) echo "<li>$e</li>";
     echo "</ul>";
 }
-// Si tout est bon → afficher en vert
-if ($message) echo "<p style='color:green;'>$message</p>";
+// Affichage du succès
+if ($success) {
+    echo "<p style='color:green;'>$success</p>";
+}
 ?>
+ 
+
