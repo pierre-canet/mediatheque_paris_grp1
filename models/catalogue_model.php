@@ -2,7 +2,7 @@
 //Modèle pour le catalogue
 
 /**
- * Récupère les 20 premiers articles du catalogue par type
+ * Récupère les 20 premiers articles de chaque table du catalogue
  */
 //CONTROLLER_PATH . '/home_controller.php';
 /**
@@ -37,32 +37,36 @@ function get_id(){
 }
 
     //return db_select($query);
-/**
- * Récupère les articles du catalogues en fonction du type de média filtré
- */
-function get_articles_by_type() {
-    /*if() {}
-    elseif() {}
-    else() {}*/
-}
 
 /**
  * Récupère les articles du catalogue en fonction du genre filtré
  */
 function get_articles_by_gender($gender) {    
-    $query ="SELECT * from books WHERE gender = :gender
-             UNION
-             SELECT * FROM movies WHERE gender = :gender
-             UNION
-             SELECT * FROM video_games WHERE gender = :gender";
-    return db_select($query, [':gender' => $gender]);
+    $query ="SELECT * from books WHERE gender = :'gender-filter';             
+             SELECT * FROM movies WHERE gender = :'gender-filter';
+             SELECT * FROM video_games WHERE gender = :'gender-filter';";
+    return db_select($query, [':gender-filter' => $gender]);
 }
 
 /**
  * Récupère les articles du catalogue selon le filtre "stock"
  */
-function get_articles_by_stock() {
-    /*if() {}
-    else {}*/
+function get_articles_by_stock_all() {
+    $query ="SELECT * FROM books;
+             SELECT * FROM movies;
+             SELECT * FROM video_gamesw;";
+    return db_select($query);
+}
+function get_articles_by_stock_free() {
+    $query ="SELECT * FROM books WHERE stock <=1;
+             SELECT * FROM movies WHERE stock <=1;
+             SELECT * FROM video_games WHERE stock <=1;";
+    return db_select($query);
+}
+function get_articles_by_stock_loaned() {
+    $query ="SELECT * FROM books WHERE stock =0;
+             SELECT * FROM movies WHERE stock =0;
+             SELECT * FROM video_games WHERE stock =0;";
+    return db_select($query);
 }
 ?>
