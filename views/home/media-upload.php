@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $type) {
         }
     }
 }
-?>
+?> 
 
 <!-- Formulaire -->
 <form method="POST" enctype="multipart/form-data">
