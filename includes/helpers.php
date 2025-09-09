@@ -214,14 +214,3 @@ function generate_slug($string) {
     $string = preg_replace('/[\s-]+/', '-', $string);
     return trim($string, '-');
 } 
-
-
-
-/**
- * Vérifie si l'utilisateur est admin, sinon redirige vers la page d'accueil
- */
-function require_admin() {
-    if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-        redirect('home');
-    }
-}

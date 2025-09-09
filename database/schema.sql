@@ -23,16 +23,45 @@ INSERT INTO users (name, email, password) VALUES
 ('John Doe', 'john@example.com', '$2y$10$/vD8hGtkBJsAae2TiSkbV.jg0bnNDAFv8xBewH14.OKvR0PpeVbq6'),
 ('Jane Smith', 'jane@example.com', '$2y$10$/vD8hGtkBJsAae2TiSkbV.jg0bnNDAFv8xBewH14.OKvR0PpeVbq6'),
 ('Admin User', 'admin@example.com', '$2y$10$/vD8hGtkBJsAae2TiSkbV.jg0bnNDAFv8xBewH14.OKvR0PpeVbq6');
--- Données test livres
-INSERT INTO `books` (`id`, `title`, `writer`, `ISBN_13`, `gender`, `page_number`, `synopsis`, `date_of_publication`, `stock`) VALUES
-(1, 'essai', 'Tester', 123, 'crash test', 1, 'Ceci est un test, si la feature est bien codée et opérationnelle, alors ce test devrait s\''afficher', '2025-09-01', 1),
-(2, 'Barbecue', 'Moi', 122, 'genre', 1, 'Pourquoi ça marche ?', '2025-09-01', 1);
--- Données test films
-INSERT INTO `movies` (`id`, `title`, `producer`, `year`, `gender`, `duration(m)`, `synopsis`, `classification`, `stock`) VALUES
-(1, 'Retour vers le Futur', 'Robert Zemeckis', 1985, 'science-fiction', 116, 'L\''intrigue du film relate les aventures de Marty McFly (Michael J. Fox), un adolescent qui voyage dans le passé à bord d\''une machine à voyager dans le temps fabriquée par son ami le docteur Emmett Brown (Christopher Lloyd) à partir d\''une voiture DeLorean DMC-12. Parti de l\''année 1985 et propulsé le 5 novembre 1955, Marty, aidé du « Doc » de 1955, doit résoudre les paradoxes temporels provoqués par son passage dans le passé, et doit aussi trouver le moyen de faire fonctionner la machine pour retourner à son époque. Marty sera notamment confronté à ses parents, George (Crispin Glover) et Lorraine McFly (Lea Thompson) qui, à l\''époque, sont encore des adolescents. Enfin, Marty devra lutter contre les stratagèmes d\''un autre adolescent, Biff Tannen (Thomas F. Wilson).', 'tout public', 1);
--- Données test jeux vidéos
-INSERT INTO `video_games` (`id`, `title`, `editor`, `plateform`, `gender`, `minimal_age`, `description`, `stock`) VALUES
-(1, 'Minecraft', 'Mojang Studios', 'pc, console, mobile', 'bac à sable', 7, 'Minecraft est un jeu vidéo de type aventure « bac à sable » développé par le Suédois Markus Persson, alias Notch, puis par la société Mojang Studios. Il s\''agit d\''un univers composé de voxels et généré de façon procédurale, qui intègre un système d\''artisanat axé sur la collecte puis la transformation de ressources naturelles (minéralogiques, fossiles, animales et végétales).', 1);
+--Données test pour la table livres
+INSERT INTO `books` (`id`, `title`, `writer`, `ISBN13`, `gender`, `page_number`, `synopsis`, `year`, `image_url`, `available`, 
+`stock`, `upload_date`) VALUES (NULL, 'Chroniques du Monde émergé - Intégrale', 'Licia Troisi', 
+'978-2-266-24473-2', 'Fantaisie', '1200', 'Nihal est une jeune fille différente des autres : 
+elle a les oreilles en pointe, les cheveux bleus et de grands yeux violets, ce qui ne l\'empêche 
+pas de mener une vie normale... jusqu\'à ce que Tyran, un despote sanguinaire, envahisse la Terre 
+des Vents et rase son village. Ce jour-là, le destin de Nihal bascule. Dès lors, la jeune fille 
+n\'a plus qu\'une idée en tête : venger les siens et sauver les huit terres du Monde Émergé. Avec 
+l\'aide de sa tante magicienne, du jeune mage Sennar et de l\'épée de cristal noir forgée par son 
+père, elle se lance à corps perdu dans une bataille fantastique qui la conduira à travers les 
+terres émergées, sur les traces d\'un continent oublié, à la recherche de talismans et la poussera 
+aux limites de sa force, de son intelligence et de son courage...', '2006', 
+'https://images.noosfere.org/couv/p/pocketj-24473-2013.jpg', '1', '1', '2025-09-09');
+-- Données test pour la table films
+INSERT INTO `movies` (`id`, `title`, `producer`, `year`, `gender`, `duration`, `synopsis`, 
+`classification`, `image_url`, `available`, `stock`, `upload_date`) VALUES (NULL, 
+'Retour vers le Futur', 'Robert Zemeckis', '1985', 'Science-fiction', '116', 
+'L\'intrigue du film relate les aventures de Marty McFly (Michael J. Fox), un adolescent qui 
+voyage dans le passé à bord d\'une machine à voyager dans le temps fabriquée par son ami le 
+docteur Emmett Brown (Christopher Lloyd) à partir d\'une voiture DeLorean DMC-12. Parti de 
+l\'année 1985 et propulsé le 5 novembre 1955, Marty, aidé du « Doc » de 1955, doit résoudre les 
+paradoxes temporels provoqués par son passage dans le passé, et doit aussi trouver le moyen de 
+faire fonctionner la machine pour retourner à son époque. Marty sera notamment confronté à ses 
+parents, George (Crispin Glover) et Lorraine McFly (Lea Thompson) qui, à l\'époque, sont encore 
+des adolescents. Enfin, Marty devra lutter contre les stratagèmes d\'un autre adolescent, Biff 
+Tannen (Thomas F. Wilson).', 'Tout public', 
+'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ1SRzv6ghvKt42eUSFxrRC8xPiGf4fK2nCwp-p-IdZyS6qghetCaAVmLKVaumyjFkevfhQL1wDsCo9CXXvc-1AzsoCOx1XNzeGcL_P05Ledg', 
+'1', '1', '2025-09-09');
+-- Données test pour la table jeux vidéos
+INSERT INTO `video_games` (`id`, `title`, `editor`, `platform`, `gender`, `year`, `min_age`, 
+`description`, `image_url`, `available`, `stock`, `upload_date`) VALUES 
+(NULL, 'Minecraft', 'Mojang Studios', 'Multi-plateforme', 'Aventure, bac à sable', '2009', 
+'7', 'Minecraft plonge le joueur dans un monde créé de manière procédurale, composé de voxels 
+représentant différents matériaux (terre, pierre, eau, fer, charbon, etc.). Le monde est formé de 
+diverses structures (arbres, cavernes, montagnes, villages, etc.) et est peuplé par des animaux 
+(vaches, moutons, etc.) ainsi que des monstres (zombies, araignées, squelettes, etc.). Le joueur 
+peut modifier son monde à volonté, soit dans le but de survivre, soit pour créer.', 
+'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Minecraft_Alex_and_fauna.png/375px-Minecraft_Alex_and_fauna.png', 
+'1', '1', '2025-09-09');
 
 -- Table de messages de contact (exemple d'extension)
 CREATE TABLE contact_messages (
@@ -44,43 +73,6 @@ CREATE TABLE contact_messages (
     read_at TIMESTAMP NULL
 );
 
--- Table pour les jeux vidéos
-CREATE TABLE `video_games` (
-  `id` int AUTO_INCREMENT PRIMARY KEY,
-  `title` varchar(255) NOT NULL,
-  `editor` varchar(255) NOT NULL,
-  `plateform` varchar(255) NOT NULL,
-  `gender` varchar(255) NOT NULL,
-  `minimal_age` int NOT NULL,
-  `description` TEXT(1000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `stock` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- Table pour les films
-CREATE TABLE `movies` (
-  `id` int AUTO_INCREMENT PRIMARY KEY,
-  `title` varchar(255) NOT NULL,
-  `producer` varchar(255) NOT NULL,
-  `year` year NOT NULL,
-  `gender` varchar(255) NOT NULL,
-  `duration(m)` int NOT NULL,
-  `synopsis` TEXT(1000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `classification` varchar(255) NOT NULL,
-  `stock` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- Table pour les livres
-CREATE TABLE `books` (
-  `id` int AUTO_INCREMENT PRIMARY KEY,
-  `title` varchar(255) NOT NULL,
-  `writer` varchar(255) NOT NULL,
-  `ISBN_13` int NOT NULL,
-  `gender` varchar(255) NOT NULL,
-  `page_number` int NOT NULL,
-  `synopsis` TEXT(1000) NOT NULL,
-  `year_of_publication` year NOT NULL,
-  `stock` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Table de paramètres de configuration
 CREATE TABLE settings (
@@ -99,8 +91,6 @@ INSERT INTO settings (key_name, value, description) VALUES
 ('max_login_attempts', '5', 'Nombre maximum de tentatives de connexion'),
 ('session_timeout', '3600', 'Timeout de session en secondes');
 
-
-
 -- Vue pour les statistiques
 CREATE VIEW user_stats AS
 SELECT 
@@ -108,3 +98,31 @@ SELECT
     COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users_30d,
     COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as new_users_7d
 FROM users; 
+-- جدول items برای کاتالوگ
+CREATE TABLE IF NOT EXISTS items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    type ENUM('book', 'movie', 'game') NOT NULL,
+    image_url VARCHAR(255) DEFAULT 'https://via.placeholder.com/150',
+    available BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- جدول rentals برای اجاره‌ها
+CREATE TABLE IF NOT EXISTS rentals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    item_id INT NOT NULL,
+    rent_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    return_date TIMESTAMP NULL,
+    status ENUM('loué', 'retourné') DEFAULT 'loué',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
+);
+
+-- داده‌های تست
+INSERT INTO items (title, description, type, image_url) VALUES
+('Livre Test', 'Un livre de test', 'book', 'https://via.placeholder.com/150'),
+('Film Test', 'Un film de test', 'movie', 'https://via.placeholder.com/150'),
+('Jeu Test', 'Un jeu de test', 'game', 'https://via.placeholder.com/150');
