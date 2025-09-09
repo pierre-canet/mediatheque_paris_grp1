@@ -15,7 +15,7 @@
             </div>
             <ul class="nav-menu">
                 <li><a href="<?php echo url(); ?>">Accueil</a></li>
-                <li><a href="<?php echo url('home/catalogue'); ?>">Catalogue</a></li>
+                <li><a href="<?php echo url('catalog/index'); ?>">Catalogue</a></li> <!-- استفاده از url() برای لینک کاتالوگ -->
                 <li><a href="<?php echo url('home/about'); ?>">À propos</a></li>
                 <li><a href="<?php echo url('home/contact'); ?>">Contact</a></li>
                 <?php if (is_logged_in()): ?>
@@ -23,7 +23,7 @@
                 <?php else: ?>
                     <li><a href="<?php echo url('auth/login'); ?>">Connexion</a></li>
                     <li><a href="<?php echo url('auth/register'); ?>">Inscription</a></li>
-                    <li><a href="<?php echo url('auth/forgot-password2'); ?>">Mot de passe oublié fatima et morad</a></li>
+                    <li><a href="<?php echo url('auth/forgot-password2'); ?>">Se déconnecter</a></li>
                 <?php endif; ?>
             </ul>
         </nav>
@@ -43,4 +43,4 @@
 
     <script src="<?php echo url('assets/js/app.js'); ?>"></script>
 </body>
-</html> 
+</html>

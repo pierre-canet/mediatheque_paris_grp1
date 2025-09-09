@@ -57,8 +57,7 @@ function auth_register() {
     ];
     
     if (is_post()) {
-        $nom = clean_input(post('name'));     
-        $prenom = clean_input(post('prenom')); 
+        $name = clean_input(post('name'));
         $email = clean_input(post('email'));
         $password = post('password');
         $confirm_password = post('confirm_password');
@@ -68,19 +67,15 @@ function auth_register() {
             set_flash('error', 'Tous les champs sont obligatoires.');
         } elseif (!validate_email($email)) {
             set_flash('error', 'Adresse email invalide.');
-        } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $password)) {
-            set_flash('error', 'Le mot de passe doit contenir au minimum 8 caractères, 
-            avec au moins 1 majuscule, 1 minuscule et 1 chiffre.');
+        } elseif (strlen($password) < 6) {
+            set_flash('error', 'Le mot de passe doit contenir au moins 6 caractères.');
         } elseif ($password !== $confirm_password) {
             set_flash('error', 'Les mots de passe ne correspondent pas.');
         } elseif (get_user_by_email($email)) {
             set_flash('error', 'Cette adresse email est déjà utilisée.');
         } else {
-            // Hashage sécurisé du mot de passe
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-            // Créer l'utilisateur 
-            $user_id = create_user($nom, $prenom, $email, $hashed_password);
+            // Créer l'utilisateur
+            $user_id = create_user($name, $email, $password);
             
             if ($user_id) {
                 set_flash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');

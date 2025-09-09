@@ -4,19 +4,60 @@
 
 // Attendre que le DOM soit chargé
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Gestion des messages flash avec auto-hide
+    // --- جستجو و فیلتر ---
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const typeFilter = document.getElementById('type');
+    const genreFilter = document.getElementById('genre');
+    const availabilityFilter = document.getElementById('availability');
+
+    function filterItems() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const typeValue = typeFilter.value.toLowerCase();
+        const genreValue = genreFilter.value.toLowerCase();
+        const availabilityValue = availabilityFilter.value;
+
+        document.querySelectorAll('.catalog-section').forEach(section => {
+            const sectionType = section.dataset.section; // livre, film, jeu
+            const items = section.querySelectorAll('.carousel-item');
+
+            items.forEach(item => {
+                const title = item.dataset.title;
+                const genre = item.dataset.genre;
+                const available = item.dataset.available;
+
+                const matchesSearch = title.includes(searchTerm);
+                const matchesType = (typeValue === 'all' || sectionType.includes(typeValue));
+                const matchesGenre = (genreValue === 'all' || genre.includes(genreValue));
+                const matchesAvailability = (availabilityValue === 'all' || available === availabilityValue);
+
+                if (matchesSearch && matchesType && matchesGenre && matchesAvailability) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    searchInput.addEventListener('input', filterItems);
+    searchButton.addEventListener('click', filterItems);
+    typeFilter.addEventListener('change', filterItems);
+    genreFilter.addEventListener('change', filterItems);
+    availabilityFilter.addEventListener('change', filterItems);
+
+    filterItems();
+
+    // --- Gestion des messages flash avec auto-hide ---
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(function(alert) {
-        // Auto-hide après 5 secondes
         setTimeout(function() {
             alert.style.opacity = '0';
             setTimeout(function() {
                 alert.remove();
             }, 300);
         }, 5000);
-        
-        // Permettre de fermer manuellement
+
         alert.addEventListener('click', function() {
             alert.style.opacity = '0';
             setTimeout(function() {
@@ -24,8 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
     });
-    
-    // Validation de formulaire côté client
+
+    // --- Validation de formulaire côté client ---
     const forms = document.querySelectorAll('form');
     forms.forEach(function(form) {
         form.addEventListener('submit', function(e) {
@@ -34,26 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // // Amélioration UX pour les boutons de soumission
-    // const submitButtons = document.querySelectorAll('button[type="submit"]');
-    // submitButtons.forEach(function(button) {
-    //     button.addEventListener('click', function() {
-    //         const form = button.closest('form');
-    //         if (form && validateForm(form)) {
-    //             button.disabled = true;
-    //             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
-                
-    //             // Réactiver après 5 secondes en cas de problème
-    //             setTimeout(function() {
-    //                 button.disabled = false;
-    //                 button.innerHTML = button.getAttribute('data-original-text') || 'Envoyer';
-    //             }, 5000);
-    //         }
-    //     });
-    // });
-    
-    // Smooth scroll pour les ancres
+
+    // --- Smooth scroll pour les ancres ---
     const anchors = document.querySelectorAll('a[href^="#"]');
     anchors.forEach(function(anchor) {
         anchor.addEventListener('click', function(e) {
@@ -67,8 +90,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // Confirmation pour les actions de suppression
+
+    // --- Confirmation pour les actions de suppression ---
     const deleteLinks = document.querySelectorAll('a[href*="delete"], button[data-action="delete"]');
     deleteLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
@@ -77,14 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // Animation d'entrée pour les cartes
+
+    // --- Animation d'entrée pour les cartes ---
     const cards = document.querySelectorAll('.feature-card, .step, .info-box');
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
-    
+
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
             if (entry.isIntersecting) {
@@ -93,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, observerOptions);
-    
+
     cards.forEach(function(card) {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
@@ -107,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function validateForm(form) {
     let isValid = true;
-    
+
     // Validation des champs requis
     const requiredFields = form.querySelectorAll('[required]');
     requiredFields.forEach(function(field) {
@@ -118,7 +141,7 @@ function validateForm(form) {
             hideFieldError(field);
         }
     });
-    
+
     // Validation des emails
     const emailFields = form.querySelectorAll('input[type="email"]');
     emailFields.forEach(function(field) {
@@ -127,22 +150,22 @@ function validateForm(form) {
             isValid = false;
         }
     });
-    
+
     // Validation des mots de passe
     const passwordField = form.querySelector('input[name="password"]');
     const confirmPasswordField = form.querySelector('input[name="confirm_password"]');
-    
+
     if (passwordField && passwordField.value.length < 6) {
         showFieldError(passwordField, 'Le mot de passe doit contenir au moins 6 caractères');
         isValid = false;
     }
-    
-    if (confirmPasswordField && passwordField && 
+
+    if (confirmPasswordField && passwordField &&
         confirmPasswordField.value !== passwordField.value) {
         showFieldError(confirmPasswordField, 'Les mots de passe ne correspondent pas');
         isValid = false;
     }
-    
+
     return isValid;
 }
 
@@ -151,14 +174,14 @@ function validateForm(form) {
  */
 function showFieldError(field, message) {
     hideFieldError(field);
-    
+
     const error = document.createElement('div');
     error.className = 'field-error';
     error.textContent = message;
     error.style.color = '#ef4444';
     error.style.fontSize = '0.875rem';
     error.style.marginTop = '0.25rem';
-    
+
     field.style.borderColor = '#ef4444';
     field.parentNode.appendChild(error);
 }
@@ -195,9 +218,9 @@ function showNotification(message, type = 'success') {
     notification.style.zIndex = '1000';
     notification.style.minWidth = '300px';
     notification.style.cursor = 'pointer';
-    
+
     document.body.appendChild(notification);
-    
+
     // Auto-hide
     setTimeout(function() {
         notification.style.opacity = '0';
@@ -205,36 +228,12 @@ function showNotification(message, type = 'success') {
             notification.remove();
         }, 300);
     }, 5000);
-    
-    // Click to hide
+
+    // Permettre de fermer manuellement
     notification.addEventListener('click', function() {
-        notification.remove();
+        notification.style.opacity = '0';
+        setTimeout(function() {
+            notification.remove();
+        }, 300);
     });
 }
-
-/**
- * Utilitaire AJAX simple
- */
-function ajax(url, options = {}) {
-    const defaults = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    };
-    
-    const config = Object.assign({}, defaults, options);
-    
-    return fetch(url, config)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erreur réseau');
-            }
-            return response.json();
-        })
-        .catch(error => {
-            console.error('Erreur AJAX:', error);
-            showNotification('Une erreur est survenue', 'error');
-            throw error;
-        });
-} 
