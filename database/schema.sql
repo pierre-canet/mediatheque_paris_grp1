@@ -14,6 +14,54 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Table pour les livres
+CREATE TABLE `books` (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  `title` varchar(255) NOT NULL,
+  `writer` varchar(255) NOT NULL,
+  `ISBN13` varchar(100) NOT NULL,
+  `gender` varchar(255) NOT NULL,
+  `page_number` int NOT NULL,
+  `synopsis` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `year` year NOT NULL,
+  `image_url` varchar(500) NOT NULL,
+  `available` int NOT NULL,
+  `stock` int NOT NULL,
+  `upload_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- Table pour les films
+CREATE TABLE `movies` (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  `title` varchar(255) NOT NULL,
+  `producer` varchar(255) NOT NULL,
+  `year` year NOT NULL,
+  `gender` varchar(255) NOT NULL,
+  `duration` int NOT NULL,
+  `synopsis` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `classification` varchar(255) NOT NULL,
+  `image_url` varchar(500) NOT NULL,
+  `available` int NOT NULL,
+  `stock` int NOT NULL,
+  `upload_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- Table pour les jeux vidéos
+CREATE TABLE `video_games` (
+  id int AUTO_INCREMENT PRIMARY KEY,
+  `title` varchar(255) NOT NULL,
+  `editor` varchar(255) NOT NULL,
+  `platform` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `gender` varchar(255) NOT NULL,
+  `year` year NOT NULL,
+  `min_age` int NOT NULL,
+  `description` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `image_url` varchar(500) NOT NULL,
+  `available` int NOT NULL,
+  `stock` int NOT NULL,
+  `upload_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
 -- Index pour optimiser les recherches
 CREATE INDEX idx_users_email ON users(email);
 
