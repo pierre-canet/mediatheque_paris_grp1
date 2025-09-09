@@ -1,21 +1,18 @@
 <?php
-/* media_model.php
-Ce modèle couvre :
-
-Création, mise à jour, suppression des médias
-
-Gestion des champs spécifiques par type (livre/film/jeu)
-
-Upload, validation et redimensionnement des images de couverture
-
-Conformité avec le cahier des charges côté administration
-*/
+/* media_model.php - adapté à la nouvelle BD */
 
 /**
  * Récupère tous les médias
  */
 function get_all_media($limit = null, $offset = 0) {
-    $query = "SELECT id, title, type, genre, stock FROM media ORDER BY title ASC";
+    $query = "
+        SELECT id, title, 'book' AS type, gender AS genre, stock FROM books
+        UNION ALL
+        SELECT id, title, 'movie' AS type, gender AS genre, stock FROM movies
+        UNION ALL
+        SELECT id, title, 'video_game' AS type, gender AS genre, stock FROM video_games
+        ORDER BY title ASC
+    ";
     if ($limit !== null) {
         $query .= " LIMIT $offset, $limit";
     }
@@ -23,11 +20,23 @@ function get_all_media($limit = null, $offset = 0) {
 }
 
 /**
- * Récupère un média par son ID
+ * Récupère un média par son ID et son type
  */
-function get_media_by_id($id) {
+function get_media_by_id($id, $type) {
     $db = db_connect();
-    $stmt = $db->prepare("SELECT * FROM media WHERE id = ?");
+    switch($type) {
+        case 'book':
+            $stmt = $db->prepare("SELECT * FROM books WHERE id = ?");
+            break;
+        case 'movie':
+            $stmt = $db->prepare("SELECT * FROM movies WHERE id = ?");
+            break;
+        case 'video_game':
+            $stmt = $db->prepare("SELECT * FROM video_games WHERE id = ?");
+            break;
+        default:
+            return false;
+    }
     $stmt->execute([$id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -37,66 +46,90 @@ function get_media_by_id($id) {
  */
 function get_media_count() {
     $db = db_connect();
-    return $db->query("SELECT COUNT(*) FROM media")->fetchColumn();
+    return $db->query("
+        SELECT 
+            (SELECT COUNT(*) FROM books) +
+            (SELECT COUNT(*) FROM movies) +
+            (SELECT COUNT(*) FROM video_games) AS total
+    ")->fetchColumn();
 }
 
 /**
  * Crée un nouveau média
  */
-function create_media($title, $type, $genre, $stock, $extra_fields = []) {
+function create_media($type, $data) {
     $db = db_connect();
-
-    $columns = 'title, type, genre, stock';
-    $placeholders = '?, ?, ?, ?';
-    $values = [$title, $type, $genre, $stock];
-
-    foreach ($extra_fields as $key => $value) {
-        $columns .= ", $key";
-        $placeholders .= ", ?";
-        $values[] = $value;
+    switch($type) {
+        case 'book':
+            $stmt = $db->prepare("INSERT INTO books (title, writer, ISBN_13, gender, page_number, synopsis, year_of_publication, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            return $stmt->execute([
+                $data['title'], $data['writer'], $data['ISBN_13'], $data['gender'],
+                $data['page_number'], $data['synopsis'], $data['year_of_publication'], $data['stock']
+            ]);
+        case 'movie':
+            $stmt = $db->prepare("INSERT INTO movies (title, producer, year, gender, `duration(m)`, synopsis, classification, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            return $stmt->execute([
+                $data['title'], $data['producer'], $data['year'], $data['gender'],
+                $data['duration'], $data['synopsis'], $data['classification'], $data['stock']
+            ]);
+        case 'video_game':
+            $stmt = $db->prepare("INSERT INTO video_games (title, editor, plateform, gender, minimal_age, description, stock) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            return $stmt->execute([
+                $data['title'], $data['editor'], $data['plateform'], $data['gender'],
+                $data['minimal_age'], $data['description'], $data['stock']
+            ]);
+        default:
+            return false;
     }
-
-    $stmt = $db->prepare("INSERT INTO media ($columns) VALUES ($placeholders)");
-    return $stmt->execute($values);
 }
 
 /**
- * Met à jour un média existant
+ * Met à jour un média
  */
-function update_media($id, $title, $type, $genre, $stock, $extra_fields = []) {
+function update_media($id, $type, $data) {
     $db = db_connect();
-
-    $set = "title = ?, type = ?, genre = ?, stock = ?";
-    $values = [$title, $type, $genre, $stock];
-
-    foreach ($extra_fields as $key => $value) {
-        $set .= ", $key = ?";
-        $values[] = $value;
+    switch($type) {
+        case 'book':
+            $stmt = $db->prepare("UPDATE books SET title = ?, writer = ?, ISBN_13 = ?, gender = ?, page_number = ?, synopsis = ?, year_of_publication = ?, stock = ? WHERE id = ?");
+            return $stmt->execute([
+                $data['title'], $data['writer'], $data['ISBN_13'], $data['gender'],
+                $data['page_number'], $data['synopsis'], $data['year_of_publication'], $data['stock'], $id
+            ]);
+        case 'movie':
+            $stmt = $db->prepare("UPDATE movies SET title = ?, producer = ?, year = ?, gender = ?, `duration(m)` = ?, synopsis = ?, classification = ?, stock = ? WHERE id = ?");
+            return $stmt->execute([
+                $data['title'], $data['producer'], $data['year'], $data['gender'],
+                $data['duration'], $data['synopsis'], $data['classification'], $data['stock'], $id
+            ]);
+        case 'video_game':
+            $stmt = $db->prepare("UPDATE video_games SET title = ?, editor = ?, plateform = ?, gender = ?, minimal_age = ?, description = ?, stock = ? WHERE id = ?");
+            return $stmt->execute([
+                $data['title'], $data['editor'], $data['plateform'], $data['gender'],
+                $data['minimal_age'], $data['description'], $data['stock'], $id
+            ]);
+        default:
+            return false;
     }
-
-    $values[] = $id;
-
-    $stmt = $db->prepare("UPDATE media SET $set WHERE id = ?");
-    return $stmt->execute($values);
 }
 
 /**
  * Supprime un média
  */
-function delete_media($id) {
+function delete_media($id, $type) {
     $db = db_connect();
-
-    // Supprime l'image de couverture si existante
-    $stmt = $db->prepare("SELECT cover_image FROM media WHERE id = ?");
-    $stmt->execute([$id]);
-    $media = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($media && !empty($media['cover_image'])) {
-        $cover_path = __DIR__ . '/../uploads/covers/' . $media['cover_image'];
-        if (file_exists($cover_path)) unlink($cover_path);
+    switch($type) {
+        case 'book':
+            $stmt = $db->prepare("DELETE FROM books WHERE id = ?");
+            break;
+        case 'movie':
+            $stmt = $db->prepare("DELETE FROM movies WHERE id = ?");
+            break;
+        case 'video_game':
+            $stmt = $db->prepare("DELETE FROM video_games WHERE id = ?");
+            break;
+        default:
+            return false;
     }
-
-    $stmt = $db->prepare("DELETE FROM media WHERE id = ?");
     return $stmt->execute([$id]);
 }
 
@@ -111,15 +144,12 @@ function upload_cover_image($file) {
     if (!in_array($file['type'], $allowed_types)) return false;
     if ($file['size'] > $max_size) return false;
 
-    // Génération d'un nom unique
     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
     $new_name = uniqid() . '.' . $ext;
     $destination = __DIR__ . '/../uploads/covers/' . $new_name;
 
-    // Déplacement du fichier
     if (!move_uploaded_file($file['tmp_name'], $destination)) return false;
 
-    // Redimensionnement
     list($width, $height) = getimagesize($destination);
     $max_width = 300;
     $max_height = 400;

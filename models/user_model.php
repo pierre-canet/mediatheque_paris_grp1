@@ -21,13 +21,12 @@ function get_user_by_id($id) {
  * Crée un nouvel utilisateur
  */
 function create_user($name, $last_name, $email, $password, $role = 'user') {
-    $hashed_password = hash_password($password);
+    $hashed_password = hash_password($password); // hash sécurisé
     $query = "INSERT INTO users (name, last_name, email, password, role, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
     
     if (db_execute($query, [$name, $last_name, $email, $hashed_password, $role])) {
         return db_last_insert_id();
     }
-    
     return false;
 }
 
@@ -43,7 +42,7 @@ function update_user($id, $name, $last_name, $email, $role = 'user') {
  * Met à jour le mot de passe d'un utilisateur
  */
 function update_user_password($id, $password) {
-    $hashed_password = hash_password($password);
+    $hashed_password = hash_password($password); // hash sécurisé
     $query = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
     return db_execute($query, [$hashed_password, $id]);
 }
@@ -94,6 +93,9 @@ function email_exists($email, $exclude_id = null) {
     return $result['count'] > 0;
 } 
 
+/**
+ * Retourne le nombre total d'utilisateurs (fonction alias)
+ */
 function get_users_count() {
     return count_users();
 }
