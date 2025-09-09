@@ -56,4 +56,4 @@ mediatheque_paris_grp1/
 ├──CODING_STANDARDS.md
 ├──CODING_STANDARDS.pdf
 ├──README.md
-└── README.pdf---
+└── README.pdf
