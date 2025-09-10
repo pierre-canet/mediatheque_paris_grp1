@@ -77,10 +77,3 @@ function flash_messages() {
         unset($_SESSION['flash_messages']);
     }
 } 
-
-/**
- * Alias pour load_view_with_layout
- */
-function render($view, $data = [], $layout = 'layout') {
-    load_view_with_layout($view, $data, $layout);
-}

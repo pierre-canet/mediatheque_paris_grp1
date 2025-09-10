@@ -4,7 +4,24 @@
 
 // Attendre que le DOM soit chargé
 document.addEventListener('DOMContentLoaded', function() {
-    
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const typeFilter = document.getElementById('type');
+    const genreFilter = document.getElementById('genre');
+    const availabilityFilter = document.getElementById('availability');
+
+    // گوش دادن به رویدادها
+    if (searchInput && searchButton && typeFilter && genreFilter && availabilityFilter) {
+        searchInput.addEventListener('input', filterItems);
+        searchButton.addEventListener('click', filterItems);
+        typeFilter.addEventListener('change', filterItems);
+        genreFilter.addEventListener('change', filterItems);
+        availabilityFilter.addEventListener('change', filterItems);
+
+        // فیلتر اولیه هنگام بارگذاری صفحه
+        filterItems();
+    }
+
     // Gestion des messages flash avec auto-hide
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(function(alert) {
@@ -35,26 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // // Amélioration UX pour les boutons de soumission
-    // const submitButtons = document.querySelectorAll('button[type="submit"]');
-    // submitButtons.forEach(function(button) {
-    //     button.addEventListener('click', function() {
-    //         const form = button.closest('form');
-    //         if (form && validateForm(form)) {
-    //             button.disabled = true;
-    //             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
-                
-    //             // Réactiver après 5 secondes en cas de problème
-    //             setTimeout(function() {
-    //                 button.disabled = false;
-    //                 button.innerHTML = button.getAttribute('data-original-text') || 'Envoyer';
-    //             }, 5000);
-    //         }
-    //     });
-    // });
-    
-    // Smooth scroll pour les ancres
-    const anchors = document.querySelectorAll('a[href^="#"]');
+    // Smooth scroll pour les ancres (به جز لینک‌های مودال)
+    const anchors = document.querySelectorAll('a[href^="#"]:not(.btn-detail):not(.btn-back)');
     anchors.forEach(function(anchor) {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -237,4 +236,42 @@ function ajax(url, options = {}) {
             showNotification('Une erreur est survenue', 'error');
             throw error;
         });
-} 
+}
+
+/**
+ * فیلتر کردن آیتم‌ها
+ */
+function filterItems() {
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const typeFilter = document.getElementById('type');
+    const genreFilter = document.getElementById('genre');
+    const availabilityFilter = document.getElementById('availability');
+
+    const searchTerm = searchInput.value.toLowerCase();
+    const typeValue = typeFilter.value.toLowerCase();
+    const genreValue = genreFilter.value.toLowerCase();
+    const availabilityValue = availabilityFilter.value;
+
+    document.querySelectorAll('.catalog-section').forEach(section => {
+        const sectionType = section.dataset.section; // livre, film, jeu
+        const items = section.querySelectorAll('.carousel-item');
+
+        items.forEach(item => {
+            const title = item.dataset.title;
+            const genre = item.dataset.genre;
+            const available = item.dataset.available;
+
+            const matchesSearch = title.includes(searchTerm);
+            const matchesType = (typeValue === 'all' || sectionType.includes(typeValue));
+            const matchesGenre = (genreValue === 'all' || genre.includes(genreValue));
+            const matchesAvailability = (availabilityValue === 'all' || available === availabilityValue);
+
+            if (matchesSearch && matchesType && matchesGenre && matchesAvailability) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+}

@@ -26,13 +26,11 @@ function auth_login() {
             $user = get_user_by_email($email);
    
             
-            if ($user && password_verify($password, $user['password'])) {
+            if ($user && verify_password($password, $user['password'])) {
                 // Connexion réussie
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_lastname']  = $user['last_name'];
-                $_SESSION['user_email']     = $user['email'];
-
+                $_SESSION['user_email'] = $user['email'];
                 
                 set_flash('success', 'Connexion réussie !');
                 redirect('home');
@@ -59,32 +57,25 @@ function auth_register() {
     ];
     
     if (is_post()) {
-        // Nettoyer et mettre la première lettre en majuscule
-        $name = mb_convert_case(clean_input(post('name')), MB_CASE_TITLE, 'UTF-8');     
-        $last_name = mb_convert_case(clean_input(post('last_name')), MB_CASE_TITLE, 'UTF-8'); 
+        $name = clean_input(post('name'));
         $email = clean_input(post('email'));
         $password = post('password');
         $confirm_password = post('confirm_password');
         
         // Validation
-        if (empty($name) || empty($last_name)||  empty($email) || empty($password)) {
+        if (empty($name) || empty($email) || empty($password)) {
             set_flash('error', 'Tous les champs sont obligatoires.');
         } elseif (!validate_email($email)) {
             set_flash('error', 'Adresse email invalide.');
-        } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $password)) {
-            set_flash('error', 'Le mot de passe doit contenir au minimum 8 caractères, 
-            avec au moins 1 majuscule, 1 minuscule et 1 chiffre.');
+        } elseif (strlen($password) < 6) {
+            set_flash('error', 'Le mot de passe doit contenir au moins 6 caractères.');
         } elseif ($password !== $confirm_password) {
             set_flash('error', 'Les mots de passe ne correspondent pas.');
         } elseif (get_user_by_email($email)) {
             set_flash('error', 'Cette adresse email est déjà utilisée.');
         } else {
-            // Hashage sécurisé du mot de passe
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-            // Créer l'utilisateur 
-            $user_id = create_user($name, $last_name, $email, $password);
-
+            // Créer l'utilisateur
+            $user_id = create_user($name, $email, $password);
             
             if ($user_id) {
                 set_flash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
